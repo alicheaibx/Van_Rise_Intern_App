@@ -1,0 +1,110 @@
+﻿/* General Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* Light gray background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Login Container */
+.login-container {
+    background-color: #fff; /* White background */
+    padding: 2rem; /* Increased padding for better spacing */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    width: 100%;
+    max-width: 350px; /* Slightly wider for better readability */
+    text-align: center;
+}
+
+/* Heading */
+h2 {
+    margin-bottom: 1.5rem; /* Increased margin for better spacing */
+    color: #333; /* Dark gray text */
+    font-size: 1.75rem; /* Slightly larger font size */
+    font-weight: 600; /* Semi-bold font */
+}
+
+/* Form Group Styling */
+.form-group {
+    margin-bottom: 1.25rem; /* Increased margin for better spacing */
+    text-align: left;
+}
+
+/* Label Styling */
+label {
+    display: block;
+    margin-bottom: 0.5rem; /* Adjusted margin */
+    color: #555; /* Medium gray text */
+    font-size: 0.9rem; /* Slightly smaller font size */
+    font-weight: 500; /* Medium font weight */
+}
+
+/* Input Field Styling */
+input {
+    width: 100%;
+    padding: 0.75rem; /* Increased padding for better touch targets */
+    box-sizing: border-box;
+    border: 1px solid #ddd; /* Light gray border */
+    border-radius: 6px; /* Rounded corners */
+    font-size: 0.9rem; /* Consistent font size */
+    transition: border-color 0.3s ease; /* Smooth transition for focus state */
+}
+
+    input:focus {
+        border-color: #28a745; /* Green border on focus */
+        outline: none; /* Remove default outline */
+        box-shadow: 0 0 5px rgba(40, 167, 69, 0.3); /* Subtle glow effect */
+    }
+
+/* Button Styling */
+button {
+    width: 100%;
+    padding: 0.75rem; /* Increased padding for better touch targets */
+    background-color: #28a745; /* Green background */
+    color: white;
+    border: none;
+    border-radius: 6px; /* Rounded corners */
+    font-size: 1rem; /* Slightly larger font size */
+    font-weight: 500; /* Medium font weight */
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition for hover state */
+}
+
+    button:hover {
+        background-color: #218838; /* Darker green on hover */
+    }
+
+    button:disabled {
+        background-color: #ccc; /* Gray background when disabled */
+        cursor: not-allowed; /* Disabled cursor */
+    }
+
+/* Error Message Styling */
+.error-message {
+    color: #dc3545; /* Red text for errors */
+    margin-top: 1rem; /* Increased margin for better spacing */
+    font-size: 0.9rem; /* Consistent font size */
+    font-weight: 500; /* Medium font weight */
+}
+
+/* Additional Links (e.g., Forgot Password, Register) */
+.additional-links {
+    margin-top: 1.5rem; /* Increased margin for better spacing */
+    text-align: center;
+}
+
+    .additional-links a {
+        color: #28a745; /* Green text for links */
+        text-decoration: none; /* Remove underline */
+        font-size: 0.9rem; /* Consistent font size */
+        margin: 0 0.5rem; /* Spacing between links */
+        transition: color 0.3s ease; /* Smooth transition for hover state */
+    }
+
+        .additional-links a:hover {
+            color: #218838; /* Darker green on hover */
+        }

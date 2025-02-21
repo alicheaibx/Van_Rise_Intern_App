@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html lang="en" ng-app="phoneReservationApp">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phone Reservation</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/css/grid.css" />
+</head>
+<body>
+    <div class="container mt-4" ng-controller="PhoneReservationController">
+
+        <!-- Search and Add Reservation -->
+        <div class="actions mb-3">
+            <div class="input-group">
+                <select-client selected-client="selectedClient" track-by="Name"></select-client>
+                <select-phone selected-phone="selectedPhone"  api-url="http://localhost:53211/api/phones/all"></select-phone>
+                <button class="btn btn-primary ml-2" ng-click="applyFilters()">Search</button>
+            </div>
+        </div>
+
+
+        <!-- Reservations Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="table-dark">ID</th>
+                        <th class="table-light">Client Name</th>
+                        <th class="table-light">Phone Number</th>
+                        <th class="table-light">Begin Effective Date</th>
+                        <th class="table-light">End Effective Date</th>
+                        @*<th class="table-light">Actions</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="reservation in filteredReservations">
+                        <td class="table-dark">{{ reservation.ID }}</td>
+                        <td class="table-light">{{ reservation.ClientName }}</td>
+                        <td class="table-light">{{ reservation.PhoneNumber }}</td>
+                        <td class="table-light">{{ reservation.BED | date:'yyyy-MM-dd' }}</td>
+                        <td class="table-light">{{ reservation.EED | date:'yyyy-MM-dd' }}</td>
+                        @*<td class="table-light">
+                          
+                        </td>*@
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/js/selectClientName.js"></script>
+    <script src="~/Scripts/js/phoneNumberReservation.js"></script>
+    <script src="~/Scripts/js/selectPhoneNumber.js"></script>
+</body>
+</html>

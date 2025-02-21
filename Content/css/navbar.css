@@ -1,0 +1,86 @@
+﻿/* General page styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header styles */
+header {
+    background-color: #343a40; /* Dark background for the navbar */
+    color: white;
+    padding: 10px 0;
+}
+
+.navbar-brand {
+    color: #fff !important;
+     transition: color 0.5s ease, text-decoration 0.3s ease;
+}
+
+    .navbar-brand:hover {
+        color: #cead19 !important;
+    }
+.navbar-nav .nav-link {
+    color: #fff !important;
+    text-decoration: none;
+    transition: color 0.5s ease, text-decoration 0.3s ease;
+}
+    .navbar-nav .nav-link:hover {
+        color: #cead19 !important;
+    }
+
+/* Navbar responsiveness */
+.navbar-toggler {
+    border: none;
+    background-color: #fff !important;
+}
+
+@media (max-width: 767px) {
+    .navbar-nav {
+        text-align: center;
+    }
+
+        .navbar-nav .nav-item {
+            margin: 10px 0;
+        }
+}
+
+/* Main content styles */
+.container {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+/* Footer styles */
+footer {
+    background-color: #343a40; /* Matching dark footer */
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+}
+
+    footer a {
+        color: #ebc41a;
+        text-decoration: none;
+    }
+
+        footer a:hover {
+            text-decoration: underline;
+            color: #cead19;
+        }
+
+/* Additional styling for better layout */
+.pb-3 {
+    padding-bottom: 1rem;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}

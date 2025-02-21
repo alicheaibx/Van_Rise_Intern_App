@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html lang="en" ng-app="clientApp">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Client Manager</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/css/grid.css" />
+</head>
+<body>
+    <div class="container mt-4" ng-controller="ClientController">
+        <!-- Shared Input for Search/Add/Edit -->
+        <div class="actions">
+            <div class="searchInput">
+                <div class="input-group">
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Search by name"
+                           ng-model="searchName" />
+                    <select-client-type selected-client="filterType"></select-client-type>
+
+                    <button class="btn btn-primary ml-2"
+                            ng-click="applyFilters()">
+                        Search
+                    </button>
+                    <button class="btn btn-primary"
+                            ng-click="openModal('add')">
+                        Add Client
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clients Table -->
+        <div class="table-responsive mt-3">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th class="table-dark">Client ID</th>
+                        <th class="table-light">Name</th>
+                        <th class="table-light">Type</th>
+                        <th class="table-light">Date of Birth</th>
+                        <th class="table-light">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="client in filteredClients" ng-click="selectClient(client.ID)">
+                        <td class="table-dark">{{ client.ID }}</td>
+                        <td class="table-light">{{ client.Name }}</td>
+                        <td class="table-light">{{ client.Type == 1 ? 'Individual' : 'Organization' }}</td>
+                        <td class="table-light">{{ client.BirthDate | date:'yyyy-MM-dd' }}</td>
+                        <td class="table-light">
+                            <button class="btn btn-warning btn-sm" ng-click="openModal('edit', client)">Edit</button>
+                            <button class="btn btn-danger btn-sm" ng-click="deleteClient(client.ID)">Delete</button>
+                            <button class="btn btn-primary" ng-click="openReservationModal(client)">Reserve Phone Number</button>
+                            <button class="btn btn-info btn-sm"
+                                    ng-if="hasActiveReservation(client.ID)"
+                                    ng-click="openManageReservationModal(client.ID)">
+                                Manage Reservation
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Client Modal -->
+        <div class="modal fade"
+             id="clientModal"
+             tabindex="-1"
+             aria-labelledby="clientModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="clientModalLabel">{{ modalTitle }}</h5>
+                        <button type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                                ng-click="closeModal()">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="clientName">Client Name</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="clientName"
+                                   ng-model="currentClient.Name"
+                                   placeholder="Enter client name" />
+                        </div>
+                        <div class="form-group">
+                            <label for="clientType">Client Type</label>
+                            <select-client-type selected-client="currentClient.Type"></select-client-type>
+                        </div>
+                        <div class="form-group">
+                            <label for="clientType">Birth Date</label>
+                            <input type="date"
+                                   class="form-control"
+                                   id="BirthDate"
+                                   ng-model="currentClient.BirthDate"
+                                   ng-init="currentClient.BirthDate = currentClient.BirthDate | date:'yyyy-MM-dd'" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-dismiss="modal"
+                                ng-click="closeModal()">
+                            Close
+                        </button>
+                        <button type="button"
+                                class="btn btn-primary"
+                                ng-click="saveClient()">
+                            <i class="{{ modalButtonIcon }}"></i> {{ modalButtonText }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservation Modal -->
+        <div class="modal fade" id="reservationModal" tabindex="-1" role="dialog" aria-labelledby="reservationModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reservationModalLabel">Add Reservation</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="closeReservationModal()">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="clientName">Client Name</label>
+                            <input type="text" class="form-control" id="clientName" ng-model="selectedClient.Name" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone Number</label>
+                            <select-phone selected-phone="newReservation.phone" api-url="http://localhost:53211/api/phones/available"></select-phone>
+                        </div>
+                        <div class="form-group">
+                            <label for="beginEffectiveDate">Begin Effective Date</label>
+                            <input type="date" class="form-control" id="beginEffectiveDate" ng-model="newReservation.beginEffectiveDate" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="endEffectiveDate">End Effective Date</label>
+                            <input type="date" class="form-control" id="endEffectiveDate" ng-model="newReservation.endEffectiveDate">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" ng-click="closeReservationModal()">Close</button>
+                        <button type="button" class="btn btn-primary" ng-click="saveReservation()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Reservation Modal -->
+        <div class="modal fade"
+             id="manageReservationModal"
+             tabindex="-1"
+             aria-labelledby="manageReservationModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="manageReservationModalLabel">Manage Reservations</h5>
+                        <button type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                                ng-click="closeManageReservationModal()">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Reservations for {{ selectedClient.Name }}</h4>
+                        <div >
+                            <select class="form-control"
+                                    ng-model="selectedPhone"
+                                    ng-options="reservation.PhoneNumber for reservation in clientReservations">
+                                <option value="">Select Phone Number</option>
+                            </select>
+                    </div>
+                        <div class="modal-footer">
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-dismiss="modal"
+                                    ng-click="closeManageReservationModal()">
+                                Close
+                            </button>
+                            <button type="button"
+                                    class="btn btn-danger"
+                                    ng-click="unreservePhoneNumber(selectedPhone)">
+                                Unreserve
+                            </button>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/js/Client.js"></script>
+    <script src="~/Scripts/js/selectClientType.directive.js"></script>
+    <script src="~/Scripts/js/selectPhoneNumber.js"></script>
+    <script src="~/Scripts/js/selectClientName.js"></script>
+</body>
+</html>

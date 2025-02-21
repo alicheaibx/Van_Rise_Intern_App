@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html lang="en" ng-app="phoneApp">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phone Manager</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/css/grid.css" />
+</head>
+<body>
+    <div class="container mt-4" ng-controller="PhoneController">
+        <!-- Shared Input for Search/Add/Edit -->
+        <div class="actions">
+            <div class="searchInput">
+                <div class="input-group">
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Search by phone number"
+                           ng-model="searchNumber" />
+
+                    <select-device selected-device="filterDevice"></select-device>
+
+
+
+
+
+                    <button class="btn btn-primary ml-2"
+                            ng-click="applyFilters()">
+                        Search
+                    </button>
+                    <button class="btn btn-primary"
+                            ng-click="openModal('add')">
+                        Add Phone
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phones Table -->
+        <div class="table-responsive mt-3">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th class="table-dark">ID</th>
+                        <th class="table-light">Phone Number</th>
+                        <th class="table-light">Device</th>
+                        <th class="table-light">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="phone in filteredPhones">
+                        <td class="table-dark">{{ phone.Id }}</td>
+                        <td class="table-light">{{ phone.Number }}</td>
+                        <td class="table-light">{{ phone.DeviceName }}</td>
+                        <td class="table-light">
+                            <button class="btn btn-warning btn-sm" ng-click="openModal('edit', phone)">Edit</button>
+                            <button class="btn btn-danger btn-sm" ng-click="deletePhone(phone.Id)">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade"
+             id="phoneModal"
+             tabindex="-1"
+             aria-labelledby="phoneModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="phoneModalLabel">{{ modalTitle }}</h5>
+                        <button type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                                ng-click="closeModal()">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text"
+                               class="form-control"
+                               ng-model="modalPhoneNumber"
+                               placeholder="Enter phone number" />
+
+                        <select-device selected-device="modalDeviceId"></select-device>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-dismiss="modal"
+                                ng-click="closeModal()">
+                            Close
+                        </button>
+                        <button type="button"
+                                class="btn btn-primary"
+                                ng-click="savePhone()">
+                            <i class="{{ modalButtonIcon }}"></i> {{ modalButtonText }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/js/Phone.js"></script>
+    <script src="~/Scripts/js/selectDevice.directive.js"></script>
+</body>
+</html>
