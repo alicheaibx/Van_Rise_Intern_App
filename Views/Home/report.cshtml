@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- AngularJS v1.4.8 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular.min.js"></script>
+    <!-- Include your external JS file containing the selectDevice directive -->
+    <script src="~/Scripts/js/selectDevice.directive.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -78,6 +80,16 @@
                     </div>
                     <div class="modal-body">
                         <div class="filter-container">
+                            <label>Filter by Device:</label>
+                            <!-- Use the selectDevice directive here -->
+                            <select-device selected-device="selectedDevice"
+                                            api-url="http://localhost:53211/api/devices/all"
+        placeholder="Choose a device..."
+        label-field="Name"
+        value-field="Name"
+        ></select-device>
+                        </div>
+                        <div class="filter-container">
                             <label for="reservationFilter">Filter by Status:</label>
                             <select id="reservationFilter" class="form-select" ng-model="reservationFilter" ng-change="updateReservationTable()">
                                 <option value="all">All</option>
@@ -117,14 +129,15 @@
 
     <script>
         // Define the AngularJS module and controller
-        angular.module('reportApp', [])
+        angular.module('reportApp', ['selectDevices']) // Include the selectDevices module
             .controller('ReportController', function ($scope, $http) {
                 // Initialize filters
                 $scope.clientFilter = 'all';
                 $scope.reservationFilter = 'all';
+                $scope.selectedDevice = null; // For the selectDevice directive
 
                 // Fetch client counts by type
-                $http.get('http://localhost:53211/api/clients/count-by-type')
+                $http.get('http://localhost:53211/api/clients/counts')
                     .then(function (response) {
                         $scope.allClients = [
                             { type: 'Individual', count: response.data.IndividualCount },
@@ -134,6 +147,16 @@
                     })
                     .catch(function (error) {
                         console.error('Error fetching client counts:', error);
+                    });
+
+                // Fetch active and inactive reservations
+                $http.get('http://localhost:53211/api/phone-reservations/active-inactive-reservations')
+                    .then(function (response) {
+                        $scope.allReservations = response.data;
+                        $scope.updateReservationTable();
+                    })
+                    .catch(function (error) {
+                        console.error('Error fetching reservation status:', error);
                     });
 
                 // Function to update the client table based on the filter
@@ -147,30 +170,28 @@
                     }
                 };
 
-                // Fetch active and inactive reservations
-                $http.get('http://localhost:53211/api/phone-reservations/active-inactive-reservations')
-                    .then(function (response) {
-                        $scope.allReservations = response.data;
-                        $scope.updateReservationTable();
-                    })
-                    .catch(function (error) {
-                        console.error('Error fetching reservation status:', error);
-                    });
-
-                // Function to update the reservation table based on the filter
+                // Function to update the reservation table based on the filters
                 $scope.updateReservationTable = function () {
-                    if ($scope.reservationFilter === 'all') {
-                        $scope.filteredReservations = $scope.allReservations;
-                    } else if ($scope.reservationFilter === 'active') {
-                        $scope.filteredReservations = $scope.allReservations.filter(function (reservation) {
-                            return reservation.ActiveReservations > 0;
-                        });
-                    } else if ($scope.reservationFilter === 'inactive') {
-                        $scope.filteredReservations = $scope.allReservations.filter(function (reservation) {
-                            return reservation.InactiveReservations > 0;
-                        });
-                    }
+                    $scope.filteredReservations = $scope.allReservations.filter(function (reservation) {
+                        // Filter by device
+                        if ($scope.selectedDevice && reservation.DeviceName !== $scope.selectedDevice) {
+                            return false;
+                        }
+                        // Filter by status
+                        if ($scope.reservationFilter === 'active' && reservation.ActiveReservations === 0) {
+                            return false;
+                        }
+                        if ($scope.reservationFilter === 'inactive' && reservation.InactiveReservations === 0) {
+                            return false;
+                        }
+                        return true;
+                    });
                 };
+
+                // Watch for changes in selectedDevice and update the table
+                $scope.$watch('selectedDevice', function () {
+                    $scope.updateReservationTable();
+                });
             });
     </script>
 </body>

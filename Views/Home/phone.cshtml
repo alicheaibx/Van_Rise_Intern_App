@@ -18,7 +18,12 @@
                            placeholder="Search by phone number"
                            ng-model="searchNumber" />
 
-                    <select-device selected-device="filterDevice"></select-device>
+                    <select-device selected-device="filterDevice"
+                                                                       api-url="http://localhost:53211/api/devices/all"
+placeholder="Choose a device..."
+label-field="Name"
+value-field="Name"
+                                   ></select-device>
 
 
 
@@ -86,7 +91,11 @@
                                ng-model="modalPhoneNumber"
                                placeholder="Enter phone number" />
 
-                        <select-device selected-device="modalDeviceId"></select-device>
+                        <select-device selected-device="modalDeviceId"
+                                                                           api-url="http://localhost:53211/api/devices/all"
+placeholder="Choose a device..."
+label-field="Name"
+value-field="DeviceId"></select-device>
 
 
                     </div>

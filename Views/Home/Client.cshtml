@@ -132,7 +132,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="form-group">
+                        <div class="form-group" style="display: none;">
                             <label for="clientName">Client Name</label>
                             <input type="text" class="form-control" id="clientName" ng-model="selectedClient.Name" disabled>
                         </div>
@@ -140,7 +140,7 @@
                             <label for="phoneNumber">Phone Number</label>
                             <select-phone selected-phone="newReservation.phone" api-url="http://localhost:53211/api/phones/available"></select-phone>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="display: none;">
                             <label for="beginEffectiveDate">Begin Effective Date</label>
                             <input type="date" class="form-control" id="beginEffectiveDate" ng-model="newReservation.beginEffectiveDate" disabled>
                         </div>

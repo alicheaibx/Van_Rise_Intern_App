@@ -36,7 +36,7 @@
             }
 
             if (deviceFilter) {
-                filteredPhones = filteredPhones.filter(phone => phone.DeviceId == deviceFilter);
+                filteredPhones = filteredPhones.filter(phone => phone.DeviceName == deviceFilter);
             }
 
             $scope.filteredPhones = filteredPhones;

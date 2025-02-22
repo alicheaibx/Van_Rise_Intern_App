@@ -347,5 +347,45 @@ namespace Van_Rise_Intern_App.Controllers
                 return InternalServerError(new Exception("Error unreserving phone number. Please try again.", ex));
             }
         }
+        // GET: api/clients/counts
+        [HttpGet]
+        [Route("counts")]
+        public async Task<IHttpActionResult> GetClientCounts()
+        {
+            try
+            {
+                int individualCount = 0;
+                int organizationCount = 0;
+
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    using (var command = new SqlCommand("dbo.GetClientCounts", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                individualCount = reader.GetInt32(reader.GetOrdinal("IndividualCount"));
+                                organizationCount = reader.GetInt32(reader.GetOrdinal("OrganizationCount"));
+                            }
+                        }
+                    }
+                }
+
+                return Ok(new
+                {
+                    IndividualCount = individualCount,
+                    OrganizationCount = organizationCount
+                });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (if logging is implemented)
+                return InternalServerError(new Exception("Error retrieving client counts. Please try again.", ex));
+            }
+        }
     }
 }
