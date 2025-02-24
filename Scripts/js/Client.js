@@ -13,6 +13,8 @@
         $scope.clientReservations = [];
         $scope.selectedClientId = null;
         $scope.selectedClient = null; // For reservation modal
+        $scope.showAgeError = false; // Flag to show/hide age validation message
+        $scope.isSaveDisabled = false; // Flag to disable/enable Save button
 
         // Initialize reservation object
         $scope.newReservation = {
@@ -21,6 +23,50 @@
             beginEffectiveDate: new Date().toISOString().split('T')[0], // Today's date
             endEffectiveDate: null
         };
+
+        // Function to validate age
+        $scope.validateAge = function () {
+            if ($scope.currentClient.Type == 1 && $scope.currentClient.BirthDate) {
+                const birthDate = new Date($scope.currentClient.BirthDate);
+                const today = new Date();
+                const age = today.getFullYear() - birthDate.getFullYear();
+
+                // Check if the birthday has occurred this year
+                const monthDifference = today.getMonth() - birthDate.getMonth();
+                if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+
+                // Show error and disable Save button if age is less than 18
+                if (age < 18) {
+                    $scope.showAgeError = true;
+                    $scope.isSaveDisabled = true;
+                } else {
+                    $scope.showAgeError = false;
+                    $scope.isSaveDisabled = false;
+                }
+            } else {
+                $scope.showAgeError = false;
+                $scope.isSaveDisabled = false;
+            }
+        };
+
+        // Watch for changes in Client Type and BirthDate
+        $scope.$watchGroup(['currentClient.Type', 'currentClient.BirthDate'], function (newValues, oldValues) {
+            if (newValues[0] != oldValues[0] || newValues[1] != oldValues[1]) {
+                $scope.validateAge();
+            }
+        });
+
+        // Watch for changes in the Type field
+        $scope.$watch('currentClient.Type', function (newType, oldType) {
+            if (newType != oldType && newType == 2) {
+                // If the type is changed to organization, clear the BirthDate
+                $scope.currentClient.BirthDate = null;
+                $scope.showAgeError = false; // Hide age validation error
+                $scope.isSaveDisabled = false; // Enable the Save button
+            }
+        });
 
         // Fetch all clients
         $scope.getClients = function () {
@@ -156,10 +202,15 @@
                 return;
             }
 
+            if ($scope.isSaveDisabled) {
+                alert('Client must be at least 18 years old.');
+                return;
+            }
+
             const clientData = {
                 Name: $scope.currentClient.Name,
                 Type: $scope.currentClient.Type,
-                BirthDate: $scope.currentClient.BirthDate
+                BirthDate: $scope.currentClient.Type == 1 ? $scope.currentClient.BirthDate : null // Clear BirthDate for organizations
             };
 
             if ($scope.modalButtonText === 'Update') {
@@ -167,7 +218,8 @@
                 $http.put(`http://localhost:53211/api/clients/update/${clientId}`, clientData)
                     .then(function () {
                         alert('Client updated successfully.');
-                        $scope.getClients();
+                        $scope.getClients(); // Refresh the client list
+                        $scope.closeModal(); // Close the modal
                     })
                     .catch(function (error) {
                         console.error('Error updating client:', error);
@@ -177,16 +229,14 @@
                 $http.post('http://localhost:53211/api/clients/add', clientData)
                     .then(function () {
                         alert('Client added successfully.');
-                        $scope.getClients();
+                        $scope.getClients(); // Refresh the client list
+                        $scope.closeModal(); // Close the modal
                     })
                     .catch(function (error) {
                         console.error('Error adding client:', error);
                         alert('Error adding client.');
                     });
             }
-
-            $scope.closeModal();
-            $scope.currentClient = {};
         };
 
         // Delete a Client
@@ -203,7 +253,6 @@
                     });
             }
         };
-
 
         // Close Client Modal
         $scope.closeModal = function () {

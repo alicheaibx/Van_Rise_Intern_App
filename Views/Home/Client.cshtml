@@ -83,6 +83,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <!-- Client Name Field -->
                         <div class="form-group">
                             <label for="clientName">Client Name</label>
                             <input type="text"
@@ -91,29 +92,42 @@
                                    ng-model="currentClient.Name"
                                    placeholder="Enter client name" />
                         </div>
+
+                        <!-- Client Type Field -->
                         <div class="form-group">
                             <label for="clientType">Client Type</label>
                             <select-client-type selected-client="currentClient.Type"></select-client-type>
                         </div>
-                        <div class="form-group">
-                            <label for="clientType">Birth Date</label>
+
+                        <!-- Date of Birth Field (Conditional Rendering) -->
+                        <!-- Date of Birth Field (Conditional Rendering) -->
+                        <div class="form-group" ng-if="currentClient.Type == 1">
+                            <label for="BirthDate">Birth Date</label>
                             <input type="date"
                                    class="form-control"
                                    id="BirthDate"
                                    ng-model="currentClient.BirthDate"
-                                   ng-init="currentClient.BirthDate = currentClient.BirthDate | date:'yyyy-MM-dd'" />
+                                   ng-init="currentClient.BirthDate = (currentClient.BirthDate || '') | date:'yyyy-MM-dd'" />
+                            <!-- Validation Message -->
+                            <small class="text-danger" ng-if="showAgeError">
+                                Client must be at least 18 years old.
+                            </small>
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <!-- Close Button -->
                         <button type="button"
                                 class="btn btn-secondary"
                                 data-dismiss="modal"
                                 ng-click="closeModal()">
                             Close
                         </button>
+
+                        <!-- Save/Update Button (Disabled if age is invalid) -->
                         <button type="button"
                                 class="btn btn-primary"
-                                ng-click="saveClient()">
+                                ng-click="saveClient()"
+                                ng-disabled="isSaveDisabled">
                             <i class="{{ modalButtonIcon }}"></i> {{ modalButtonText }}
                         </button>
                     </div>
@@ -177,13 +191,13 @@
                     </div>
                     <div class="modal-body">
                         <h4>Reservations for {{ selectedClient.Name }}</h4>
-                        <div >
+                        <div>
                             <select class="form-control"
                                     ng-model="selectedPhone"
                                     ng-options="reservation.PhoneNumber for reservation in clientReservations">
                                 <option value="">Select Phone Number</option>
                             </select>
-                    </div>
+                        </div>
                         <div class="modal-footer">
                             <button type="button"
                                     class="btn btn-secondary"
@@ -197,17 +211,17 @@
                                 Unreserve
                             </button>
                         </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="~/Scripts/js/Client.js"></script>
-    <script src="~/Scripts/js/selectClientType.directive.js"></script>
-    <script src="~/Scripts/js/selectPhoneNumber.js"></script>
-    <script src="~/Scripts/js/selectClientName.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="~/Scripts/js/Client.js"></script>
+        <script src="~/Scripts/js/selectClientType.directive.js"></script>
+        <script src="~/Scripts/js/selectPhoneNumber.js"></script>
+        <script src="~/Scripts/js/selectClientName.js"></script>
 </body>
 </html>
